@@ -9,7 +9,7 @@ contract GMinitTest is Test {
     IERC20GM iGM;
 
     function setUp() public {
-        iGM = IERC20GM( address(new ERC20GM()));
+        iGM = IERC20GM( address(new ERC20GM("Fungible Governable Token", "FGT", 0)));
     }
 
     function testIsInit() public {
