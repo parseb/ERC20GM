@@ -15,9 +15,15 @@ interface IERC20GM is IERC20 {
     //// @param howMany_ number of tokens wanted
     function mint(uint256 howMany_) payable external returns (bool);
 
+    //// @notice burns amount provided sender has balanace. returns calculated 
+    //// @param howMany_ amount to burn
+    function burn(uint256 howMany_) external returns (bool);
+
     //// @notice calculates how much specified howMany costs for value sent 
     //// @param howMany_ how many
     //// @return returns total value of how many times price
     function howMuchFor(uint256 howMany_) external view returns (uint256);
     
+
+
 }

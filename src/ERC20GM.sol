@@ -6,6 +6,7 @@ import {ERC20} from "openzeppelin-contracts/token/ERC20/ERC20.sol";
 
 contract ERC20GM is ERC20, IERC20GM {
     
+    //// price amount in gwei
     uint256 public price;
 
     //// price -> signal 
@@ -19,10 +20,11 @@ contract ERC20GM is ERC20, IERC20GM {
     ////////////////// Events
 
     event PriceChanged(uint256 price);
-
     event PriceSignaled(address, uint256 indexed price, uint256 atTimeStamp);
 
-
+    ////////////////// Errors
+    
+    error ValueMismatch();
 
     ////////////////// External
 
@@ -36,7 +38,16 @@ contract ERC20GM is ERC20, IERC20GM {
     }
 
     //// @inheritdoc IERC20GM
-    function mint(uint256 howMany_) payable external returns (bool) {}
+    function mint(uint256 howMany_) payable external returns (bool) {
+        if (msg.value != howMuchFor(howMany_)) revert ValueMismatch();
+        _mint(msg.sender, howMany_);
+    }
+
+    //// @inheritdoc IERC20GM
+    function burn(uint256 howMany_) external returns (bool) {
+        _burn(msg.sender, howMany_);
+        msg.sender.call{value: howMuchFor(howMany_)};
+    }
 
     //// @inheritdoc IERC20GM
     function signal(uint256 price_) external returns (uint256) {
@@ -54,7 +65,7 @@ contract ERC20GM is ERC20, IERC20GM {
              emit PriceChanged(price);
         }
 
-        emit PriceSignaled(msg.sender, price_, block.timestamp);
+        emit PriceSignaled(msg.sender, price_ , block.timestamp);
         return price;
     }
 
@@ -62,7 +73,36 @@ contract ERC20GM is ERC20, IERC20GM {
     ////////////////// VIEW //////////////////
 
     //// @inheritdoc IERC20GM
-    function howMuchFor(uint256 howMany_) external view returns (uint256)  { 
-        return ( howMany_ * price); 
+    function howMuchFor(uint256 howMany_) public view returns (uint256)  { 
+        return ( howMany_ * price * 1 gwei); 
         }
+
+
+    ////////////////// OVERRIDE //////////////////
+
+        function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 amount
+    ) internal override {}
+
+    /**
+     * @dev Hook that is called after any transfer of tokens. This includes
+     * minting and burning.
+     *
+     * Calling conditions:
+     *
+     * - when `from` and `to` are both non-zero, `amount` of ``from``'s tokens
+     * has been transferred to `to`.
+     * - when `from` is zero, `amount` tokens have been minted for `to`.
+     * - when `to` is zero, `amount` of ``from``'s tokens have been burned.
+     * - `from` and `to` are never both zero.
+     *
+     * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
+     */
+    function _afterTokenTransfer(
+        address from,
+        address to,
+        uint256 amount
+    ) internal override {}
 }
