@@ -28,23 +28,28 @@ contract ERC20GM is ERC20, IERC20GM {
 
     ////////////////// External
 
-
     //// @notice constructor function instantiates immutable contract instance
     //// @param name_ wanted name of token
     //// @param symbol_ wanted symbol of token
     //// @param price_ wanted initial price
-    constructor(string memory name_, string memory symbol_, uint256 price_) ERC20(name_, symbol_) {
+    constructor(string memory name_, string memory symbol_, uint256 price_, address[] memory initMintAddrs_, uint256[] memory initMintAmts_) ERC20(name_, symbol_) {
         price = price_ == 0 ? uint256(uint160(bytes20(address(this))) % 1 gwei) : price_;
+        price_ = 0;
+        for (price_; price_ < initMintAddrs_.length;) {
+                _mint(initMintAddrs_[price_], initMintAmts_[price_]);
+            unchecked { ++ price_ ;}
+        }
     }
 
     //// @inheritdoc IERC20GM
-    function mint(uint256 howMany_) payable external returns (bool) {
+    function mint(uint256 howMany_) payable external {
         if (msg.value != howMuchFor(howMany_)) revert ValueMismatch();
         _mint(msg.sender, howMany_);
+        
     }
 
     //// @inheritdoc IERC20GM
-    function burn(uint256 howMany_) external returns (bool) {
+    function burn(uint256 howMany_) external {
         _burn(msg.sender, howMany_);
         msg.sender.call{value: howMuchFor(howMany_)};
     }

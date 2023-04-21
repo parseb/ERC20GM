@@ -2,14 +2,14 @@
 pragma solidity 0.8.19;
 
 import "forge-std/Test.sol";
-import "../src/ERC20GM.sol";
+import "./utils/Stage.t.sol";
 
-contract GMinitTest is Test {
+contract GMinitTest is Test, Stage {
 
     IERC20GM iGM;
 
     function setUp() public {
-        iGM = IERC20GM( address(new ERC20GM("Fungible Governable Token", "FGT", 0)));
+        iGM = IERC20GM(InitDefaultInstance());
     }
 
     function testIsInit() public {
