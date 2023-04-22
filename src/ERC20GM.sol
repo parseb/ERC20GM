@@ -25,6 +25,7 @@ contract ERC20GM is ERC20, IERC20GM {
     ////////////////// Errors
     
     error ValueMismatch();
+    error BurnRefundF();
 
     ////////////////// External
 
@@ -51,7 +52,8 @@ contract ERC20GM is ERC20, IERC20GM {
     //// @inheritdoc IERC20GM
     function burn(uint256 howMany_) external {
         _burn(msg.sender, howMany_);
-        msg.sender.call{value: howMuchFor(howMany_)};
+        (bool s , ) = msg.sender.call{value: howMuchFor(howMany_)}("");
+        if (! s) revert BurnRefundF();
     }
 
     //// @inheritdoc IERC20GM

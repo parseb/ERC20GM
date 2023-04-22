@@ -13,7 +13,7 @@ contract GMinitTest is Test, Stage {
         iGM = IERC20GM(InitDefaultInstance());
     }
 
-    function testSimpleMint() public {
+    function testSimpleMint() public returns (uint256)  {
         vm.expectRevert();
         iGM.mint(1);
 
@@ -26,7 +26,22 @@ contract GMinitTest is Test, Stage {
         vm.expectRevert();
         iGM.mint{value:amt1}(6);
 
+        vm.prank(address(222));
         iGM.mint{value:amt1}(5);
+        return amt1;
+    }
+
+    function testSimpleBurn() public {
+        uint expectedAmount = testSimpleMint();
+        console.log("balance after mint - ", address(222).balance, " -- epxectedA -- ", expectedAmount);
+        uint balanceA = address(222).balance; 
+        vm.prank(address(222));
+        iGM.burn(5);
+        uint balanceB = address(222).balance; 
+        console.log("balance after burn - ", address(222).balance);
+        console.log("A-B-expectedA", balanceA , balanceB , expectedAmount);
+        assertTrue(balanceB > balanceA, "B !> A");
+        assertTrue(balanceB == balanceA + expectedAmount, "some value lost");
     }
 
 
