@@ -5,7 +5,6 @@ import "forge-std/Test.sol";
 import "./utils/Stage.t.sol";
 
 contract GMinitTest is Test, Stage {
-
     IERC20GM iGM;
 
     function setUp() public {
@@ -13,7 +12,6 @@ contract GMinitTest is Test, Stage {
     }
 
     function testIsInit() public {
-        assertTrue(address(iGM).code.length > 0, "codesize is 0" );
+        assertTrue(address(iGM).code.length > 0, "codesize is 0");
     }
-
 }
