@@ -101,7 +101,6 @@ contract ERC20GM is ERC20, IERC20GM {
         return priceSignal[p_];
     }
 
-
     function _beforeTokenTransfer(address from, address to, uint256 amount) internal override {}
 
     function _afterTokenTransfer(address from, address to, uint256 amount) internal override {
