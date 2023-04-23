@@ -39,11 +39,13 @@ contract ERC20GM is ERC20, IERC20GM {
         uint256[] memory initMintAmts_
     ) ERC20(name_, symbol_) {
         price = price_ == 0 ? (uint256(uint160(bytes20(address(this))) % 10)) : price_;
-        price_ = 0;
-        for (price_; price_ < initMintAddrs_.length;) {
-            _mint(initMintAddrs_[price_], initMintAmts_[price_]);
-            unchecked {
-                ++price_;
+        if (initMintAddrs_.length > 0 && initMintAmts_[0] > 0) {
+            price_ = 0;
+            for (price_; price_ < initMintAddrs_.length;) {
+                _mint(initMintAddrs_[price_], initMintAmts_[price_]);
+                unchecked {
+                    ++price_;
+                }
             }
         }
     }
@@ -91,7 +93,7 @@ contract ERC20GM is ERC20, IERC20GM {
     }
 
     function refundQtFor(uint256 howMany_) public view returns (uint256) {
-        return howMany_ * address(this).balance / totalSupply();
+        return howMany_ * (address(this).balance / totalSupply());
     }
 
     //// @inheritdoc IERC20GM
@@ -99,23 +101,20 @@ contract ERC20GM is ERC20, IERC20GM {
         return priceSignal[p_];
     }
 
-    ////////////////// OVERRIDE //////////////////
 
     function _beforeTokenTransfer(address from, address to, uint256 amount) internal override {}
 
-    /**
-     * @dev Hook that is called after any transfer of tokens. This includes
-     * minting and burning.
-     *
-     * Calling conditions:
-     *
-     * - when `from` and `to` are both non-zero, `amount` of ``from``'s tokens
-     * has been transferred to `to`.
-     * - when `from` is zero, `amount` tokens have been minted for `to`.
-     * - when `to` is zero, `amount` of ``from``'s tokens have been burned.
-     * - `from` and `to` are never both zero.
-     *
-     * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
-     */
-    function _afterTokenTransfer(address from, address to, uint256 amount) internal override {}
+    function _afterTokenTransfer(address from, address to, uint256 amount) internal override {
+        if (from != address(0)) {
+            if (agentSignal[from][0] != 0) {
+                if (amount <= priceSignal[agentSignal[from][0]]) {
+                    priceSignal[agentSignal[from][0]] -= amount;
+                    agentSignal[from][1] -= amount;
+                } else {
+                    delete priceSignal[agentSignal[from][0]];
+                    delete agentSignal[from];
+                }
+            }
+        }
+    }
 }
