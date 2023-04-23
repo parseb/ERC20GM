@@ -33,7 +33,8 @@ contract GMinitTest is Test, Stage {
 
     function testSimpleBurn(uint256 amttb) public {
         vm.assume(amttb < 100 && amttb > 1);
-        uint256 expectedAmount = testSimpleMint(amttb);
+        uint256 paid = testSimpleMint(amttb);
+        uint256 expectedAmount = iGM.refundQtFor(amttb);
         console.log("balance after mint - ", address(222).balance, " -- epxectedA -- ", expectedAmount);
         uint256 balanceA = address(222).balance;
         vm.prank(address(222));
@@ -41,7 +42,25 @@ contract GMinitTest is Test, Stage {
         uint256 balanceB = address(222).balance;
         console.log("balance after burn - ", address(222).balance);
         console.log("A-B-expectedA", balanceA, balanceB, expectedAmount);
-        assertTrue(balanceB > balanceA, "B !> A");
+
         assertEq(balanceB, balanceA + expectedAmount, "some value lost");
+    }
+
+    function testBurnReturn(uint256 p_) public {
+        vm.assume(p_ > 100 gwei);
+        address[] memory beneficiaries = new address[](3);
+        uint256[] memory amounts = new uint256[](3);
+
+        beneficiaries[0] = address(111);
+        beneficiaries[1] = address(222);
+        beneficiaries[2] = address(333);
+
+        amounts[0] = 100 ether;
+        amounts[1] = 1 ether;
+        amounts[2] = 2 ether;
+
+        // iGM = IERC20GM(InitDefaultWithPrice(p_, beneficiaries, amounts));
+
+        //// ####
     }
 }

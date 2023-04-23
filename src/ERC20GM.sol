@@ -38,7 +38,7 @@ contract ERC20GM is ERC20, IERC20GM {
         address[] memory initMintAddrs_,
         uint256[] memory initMintAmts_
     ) ERC20(name_, symbol_) {
-        price = price_ == 0 ? (uint256(uint160(bytes20(address(this))) % 10)) * 1 gwei : price_;
+        price = price_ == 0 ? (uint256(uint160(bytes20(address(this))) % 10)) : price_;
         price_ = 0;
         for (price_; price_ < initMintAddrs_.length;) {
             _mint(initMintAddrs_[price_], initMintAmts_[price_]);
@@ -56,8 +56,9 @@ contract ERC20GM is ERC20, IERC20GM {
 
     //// @inheritdoc IERC20GM
     function burn(uint256 howMany_) external {
+        uint256 amount = refundQtFor(howMany_);
         _burn(msg.sender, howMany_);
-        (bool s,) = msg.sender.call{value: howMuchFor(howMany_)}("");
+        (bool s,) = msg.sender.call{value: amount}("");
         if (!s) revert BurnRefundF();
     }
 
@@ -86,7 +87,11 @@ contract ERC20GM is ERC20, IERC20GM {
 
     //// @inheritdoc IERC20GM
     function howMuchFor(uint256 howMany_) public view returns (uint256) {
-        return (howMany_ * price * 1 gwei);
+        return howMany_ * price;
+    }
+
+    function refundQtFor(uint256 howMany_) public view returns (uint256) {
+        return howMany_ * address(this).balance / totalSupply();
     }
 
     //// @inheritdoc IERC20GM

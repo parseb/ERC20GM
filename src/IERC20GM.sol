@@ -21,6 +21,11 @@ interface IERC20GM is IERC20 {
     //// @return returns total value of how many times price
     function howMuchFor(uint256 howMany_) external view returns (uint256);
 
+    //// @notice calculates how much specified howMany costs for value sent
+    //// @param howMany_ how many
+    //// @return returns total value of how many times price
+    function refundQtFor(uint256 howMany_) external view returns (uint256);
+
     //// @notice retrieves in-force price
     function price() external view returns (uint256);
 
