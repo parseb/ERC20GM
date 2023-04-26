@@ -4,6 +4,7 @@ pragma solidity 0.8.19;
 import {IERC20GM} from "./IERC20GM.sol";
 import {ERC20} from "openzeppelin-contracts/token/ERC20/ERC20.sol";
 
+//// @notice ERC20GM: Fungible, Governable, Mintable Token
 contract ERC20GM is ERC20, IERC20GM {
     //// price amount
     uint256 public price;
@@ -97,8 +98,13 @@ contract ERC20GM is ERC20, IERC20GM {
     }
 
     //// @inheritdoc IERC20GM
-    function signalStrength(uint256 p_) public view returns (uint256) {
+    function signalStrength(uint256 p_) external view returns (uint256) {
         return priceSignal[p_];
+    }
+
+    //// @inheritdoc IERC20GM
+    function signalOf(address whom_) external view returns (uint256[2] memory) {
+        return agentSignal[whom_];
     }
 
     function _beforeTokenTransfer(address from, address to, uint256 amount) internal override {}
