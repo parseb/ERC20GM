@@ -125,4 +125,157 @@ contract TransferSignalT is Test, Stage {
         sig3 = iGM.signal(p_ * 3);
         assertTrue(sig3 != p_ * 2);
     }
+
+    function testCircleTransfer2() public {
+        address A = address(111);
+        address B = address(999);
+        vm.prank(A);
+        uint256 baseBudget = iGM.balanceOf(A);
+        assertTrue(baseBudget > iGM.totalSupply() / 2 - 1, "majoritarian balance expected");
+
+        uint256 snap = vm.snapshot();
+
+        uint256 ep = iGM.price() + 1;
+        vm.prank(A);
+        iGM.signal(ep);
+        // console.log("decing majority ", iGM.balanceOf(A) >= iGM.totalSupply() / 2);
+        // console.log("signalS - agentAstr", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+        assertTrue(iGM.price() == ep);
+
+        vm.prank(A);
+        iGM.transfer(B, baseBudget / 3);
+        ++ep;
+        vm.prank(B);
+        iGM.signal(ep);
+        // console.log("signalS - agentAstr", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+
+        assertTrue(iGM.signalStrength(ep) == iGM.balanceOf(B));
+        uint256 s1 = iGM.signalStrength(ep);
+
+        vm.prank(B);
+        iGM.transfer(A, baseBudget / 6);
+        // console.log("transfer BA", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+
+        assertTrue(iGM.signalStrength(ep) == s1 - baseBudget / 6);
+        vm.prank(A);
+        iGM.transfer(B, baseBudget / 6);
+                // console.log("transfer AB - agentAstr", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+
+
+        vm.prank(B);
+        iGM.transfer(A, baseBudget / 6);
+        // console.log("transfer BA - agentAstr", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+
+        vm.prank(A);
+        iGM.transfer(B, baseBudget / 6);
+        // console.log("transferAB - agentAstr", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+
+        assertTrue(iGM.signalOf(B)[0] == ep);
+
+
+
+
+        vm.prank(B);
+        iGM.transfer(A, baseBudget / 6);
+        // console.log("transferBA- agentAstr", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+        vm.prank(A);
+        iGM.transfer(B, baseBudget / 6);
+        // console.log("transferAB - agentAstr", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+
+        vm.revertTo(snap);
+        // console.log("___________=====snap====----------");
+        ep = 69696;
+        vm.prank(A);
+        iGM.signal(ep);
+        vm.prank(A);
+        iGM.transfer(address(1), baseBudget / 2);
+        baseBudget = iGM.balanceOf(A);
+        vm.prank(A);
+        ++ep;
+        iGM.signal(ep);
+        vm.prank(A);
+        iGM.transfer(B, baseBudget / 6);
+        // console.log("transfer AB -bf", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+        vm.prank(B);
+        iGM.transfer(A, baseBudget / 6);
+        // console.log("transfer BA -bf", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+
+        vm.prank(A);
+        iGM.transfer(B, baseBudget / 6);
+        // console.log("transfer AB -bf", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+        vm.prank(B);
+        iGM.transfer(A, baseBudget / 6);
+        // console.log("transfer BA -bf", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+
+        vm.prank(A);
+        iGM.transfer(B, baseBudget / 6);
+        // console.log("transfer AB -bf", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+        vm.prank(B);
+        iGM.transfer(A, baseBudget / 6);
+        // console.log("transfer BA -bf", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+
+        vm.prank(A);
+        iGM.transfer(B, baseBudget / 6);
+        // console.log("transfer AB -bf", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+        vm.prank(B);
+        iGM.transfer(A, baseBudget / 6);
+        // console.log("transfer BA -bf", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+
+        vm.prank(A);
+        iGM.transfer(B, baseBudget / 6);
+        // console.log("transfer AB -bf", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+        vm.prank(B);
+        iGM.transfer(A, baseBudget / 6);
+        // console.log("transfer BA -bf", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+
+        vm.prank(A);
+        iGM.transfer(B, baseBudget / 6);
+        // console.log("transfer AB -bf", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+        vm.prank(B);
+        iGM.transfer(A, baseBudget / 6);
+        // console.log("transfer BA -bf", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+
+        ++ ep;
+
+        vm.prank(A);
+        iGM.transfer(B, baseBudget / 6);
+        // console.log("transfer AB -bf", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+        uint AAA = iGM.signalStrength(ep)+ iGM.signalOf(A)[1];
+        vm.prank(B);
+        iGM.transfer(A, baseBudget / 6);
+        // console.log("transfer BA -bf", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+        uint BBB = iGM.signalStrength(ep) + iGM.signalOf(A)[1];
+
+        vm.prank(A);
+        iGM.transfer(B, baseBudget / 6);
+        // console.log("transfer AB -bf", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+        assertTrue(iGM.signalStrength(ep) + iGM.signalOf(A)[1] == AAA);
+
+        vm.prank(B);
+        iGM.transfer(A, baseBudget / 6);
+        // console.log("transfer BA -bf", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+        assertTrue(iGM.signalStrength(ep) + iGM.signalOf(A)[1] == BBB);
+
+        /////
+
+        ++ ep;
+        vm.prank(A);
+        iGM.signal(ep);
+
+        vm.prank(A);
+        iGM.transfer(B, baseBudget / 6);
+        // console.log("transfer AB -bf", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+        vm.prank(B);
+        iGM.transfer(A, baseBudget / 6);
+        // console.log("transfer BA -bf", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+
+        vm.prank(A);
+        iGM.transfer(B, baseBudget / 6);
+        // console.log("transfer AB -bf", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+        vm.prank(B);
+        iGM.transfer(A, baseBudget / 6);
+        // console.log("transfer BA -bf", iGM.signalStrength(ep), iGM.signalOf(A)[1]);
+
+
+    }
 }

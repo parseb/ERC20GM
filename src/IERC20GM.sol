@@ -34,6 +34,6 @@ interface IERC20GM is IERC20 {
     function signalStrength(uint256 p_) external view returns (uint256);
 
     //// @notice retrieves current user signal state
-    //// @param whom_ address of agent to 
+    //// @param whom_ address of agent to
     function signalOf(address whom_) external view returns (uint256[2] memory);
 }

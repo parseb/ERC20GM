@@ -120,6 +120,10 @@ contract ERC20GM is ERC20, IERC20GM {
                     delete agentSignal[from];
                 }
             }
+                            if (to != address(0) && agentSignal[to][0] != 0 && agentSignal[to][0] > price) {
+                    agentSignal[to][1] += amount;
+                    priceSignal[agentSignal[to][0]] += amount;
+                }
         }
     }
 }
